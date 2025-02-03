@@ -54,7 +54,7 @@ while True:
     cv2.circle(img, center, 5, (255, 255, 255), -1, cv2.LINE_AA)
     
     # clock
-    cv2.imshow("Analog Clock", img)
+    cv2.imshow("clock dynamic", img)
     
     # exit on click 'q'
     if cv2.waitKey(1000 // 30) & 0xFF == ord('q'):
