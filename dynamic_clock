@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-import time
-import math
 
 diameter = 400
 center = (diameter // 2, diameter // 2)
@@ -9,8 +7,8 @@ radius = diameter // 2 - 10
 
 # draw clock hands
 def draw_hand(img, angle, length, thickness, color):
-    end_x = int(center[0] + length * math.cos(angle))
-    end_y = int(center[1] + length * math.sin(angle))
+    end_x = int(center[0] + length * np.cos(angle))
+    end_y = int(center[1] + length * np.sin(angle))
     cv2.line(img, center, (end_x, end_y), color, thickness, cv2.LINE_AA)
 
 #  draw clock face
@@ -23,11 +21,11 @@ def draw_clock_face():
     
     # hour markers
     for i in range(12):
-        angle = math.radians(i * 30)
-        inner_x = int(center[0] + (radius - 20) * math.cos(angle))
-        inner_y = int(center[1] + (radius - 20) * math.sin(angle))
-        outer_x = int(center[0] + radius * math.cos(angle))
-        outer_y = int(center[1] + radius * math.sin(angle))
+        angle = np.radians(i * 30)
+        inner_x = int(center[0] + (radius - 20) * np.cos(angle))
+        inner_y = int(center[1] + (radius - 20) * np.sin(angle))
+        outer_x = int(center[0] + radius * np.cos(angle))
+        outer_y = int(center[1] + radius * np.sin(angle))
         cv2.line(img, (inner_x, inner_y), (outer_x, outer_y), (255, 255, 255), 3, cv2.LINE_AA)
     
     return img
@@ -35,15 +33,16 @@ def draw_clock_face():
 # loop to update the clock in real time
 while True:
     img = draw_clock_face()
-    
-    # current time
-    t = time.localtime()
-    hours, minutes, seconds = t.tm_hour % 12, t.tm_min, t.tm_sec
+    # this is the time now
+    ticks = cv2.getTickCount() // cv2.getTickFrequency()
+    hours = (ticks // 3600) % 12
+    minutes = (ticks // 60) % 60
+    seconds = ticks % 60
     
     # angles for hands
-    sec_angle = math.radians(270 + seconds * 6)
-    min_angle = math.radians(270 + minutes * 6 + seconds * 0.1)
-    hour_angle = math.radians(270 + hours * 30 + minutes * 0.5)
+    sec_angle = np.radians(270 + seconds * 6)
+    min_angle = np.radians(270 + minutes * 6 + seconds * 0.1)
+    hour_angle = np.radians(270 + hours * 30 + minutes * 0.5)
     
     # hands
     draw_hand(img, hour_angle, radius * 0.5, 6, (0, 255, 0))  # hour hand (green)
